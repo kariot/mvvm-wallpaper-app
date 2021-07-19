@@ -8,8 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import me.kariot.wallpaperapp.databinding.ListImageItemBinding
 import me.kariot.wallpaperapp.model.responseModel.Photo
 import me.kariot.wallpaperapp.utils.extensions.fromUrl
+import me.kariot.wallpaperapp.utils.extensions.openUrl
 
-class MainImageAdapter :
+class MainImageAdapter(val endOfListCallback: () -> Unit) :
     ListAdapter<Photo, MainImageAdapter.ImageIemVH>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageIemVH {
@@ -20,6 +21,9 @@ class MainImageAdapter :
     override fun onBindViewHolder(holder: ImageIemVH, position: Int) {
         val photo = getItem(position)
         holder.bind(photo)
+        if (position == currentList.size - 1) {
+            endOfListCallback()
+        }
     }
 
     override fun getItemCount(): Int = currentList.size
@@ -29,7 +33,12 @@ class MainImageAdapter :
         fun bind(photo: Photo?) {
             photo?.let { photo ->
                 with(bindingView) {
-                    imageView.fromUrl(photo.url)
+                    imageView.fromUrl(photo.src?.portrait)
+                    tvAuthor.text = photo.photographer
+                    tvDimension.text = "${photo.width}x${photo.height}"
+                    tvAuthor.setOnClickListener {
+                        it.context.openUrl(photo.photographerUrl)
+                    }
                 }
             }
         }

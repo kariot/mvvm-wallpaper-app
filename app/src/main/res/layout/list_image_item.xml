@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:scaleType="centerCrop"
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,10 +28,12 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/font_bold"
             android:text="Author"
+            android:id="@+id/tvAuthor"
             android:textColor="@color/white"
             android:textSize="@dimen/_16ssp" />
 
         <TextView
+            android:id="@+id/tvDimension"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Author"

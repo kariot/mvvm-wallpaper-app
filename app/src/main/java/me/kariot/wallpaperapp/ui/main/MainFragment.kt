@@ -13,7 +13,10 @@ import me.kariot.wallpaperapp.viewModel.main.ImagesViewModel
 
 class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate) {
     private val imagesAdapter: MainImageAdapter by lazy {
-        MainImageAdapter()
+        MainImageAdapter {
+            Toast.makeText(requireContext(), "Loads next page", Toast.LENGTH_SHORT).show()
+            imagesViewModel.loadNextPage()
+        }
     }
     private val imagesViewModel by lazy {
         val repo = MainRepository()
@@ -30,14 +33,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
         binding.vpImages.apply {
             adapter = imagesAdapter
         }
-        imagesViewModel.imagesResponse.observe(viewLifecycleOwner, {
+        imagesViewModel.images.observe(viewLifecycleOwner, {
             when (it) {
                 is Resource.Loading -> {
                     showLoading()
                 }
                 is Resource.Success -> {
                     hideProgress()
-                    imagesAdapter.submitList(it.data?.photos)
+                    imagesAdapter.submitList(it.data)
                 }
                 is Resource.Error -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
