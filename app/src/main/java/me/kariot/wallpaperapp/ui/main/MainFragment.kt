@@ -14,7 +14,6 @@ import me.kariot.wallpaperapp.viewModel.main.ImagesViewModel
 class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate) {
     private val imagesAdapter: MainImageAdapter by lazy {
         MainImageAdapter {
-            Toast.makeText(requireContext(), "Loads next page", Toast.LENGTH_SHORT).show()
             imagesViewModel.loadNextPage()
         }
     }
