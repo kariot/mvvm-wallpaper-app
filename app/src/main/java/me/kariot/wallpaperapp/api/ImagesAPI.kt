@@ -11,7 +11,7 @@ interface ImagesAPI {
         @Query("page")
         page: Int,
         @Query("per_page")
-        perPage: Int = 20,
+        perPage: Int = 5,
         @Query("query")
         query: String = "mobile wallpaper"
     ): Response<PhotosResponseModel>
