@@ -69,12 +69,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
             }
         })
         binding.fabWallpaper.setOnClickListener {
-            val currentWallpaper = imagesAdapter.currentList[binding.vpImages.currentItem]
-            ImageUtils.urlToBitmap(requireContext(), currentWallpaper.src?.portrait, { bitmap ->
+            val currentWallpaper =
+                imagesViewModel.images.value?.data?.get(binding.vpImages.currentItem)
+            Log.d("Current Item", "${binding.vpImages.currentItem}")
+            ImageUtils.urlToBitmap(requireContext(), currentWallpaper?.src?.portrait, { bitmap ->
                 val isSuccess =
-                    ImageUtils.saveImageToStorage(requireContext(), bitmap, currentWallpaper.id)
+                    ImageUtils.saveImageToStorage(requireContext(), bitmap, currentWallpaper?.id)
                 if (isSuccess) {
-                    startImageCropper(currentWallpaper.id)
+                    startImageCropper(currentWallpaper?.id)
                 }
             }, {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()

@@ -57,7 +57,11 @@ object ImageUtils {
         return withContext(Dispatchers.IO) {
             val files = context.filesDir.listFiles()
             val filteredFiles =
-                files?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }?.map {
+                files?.filter {
+                    it.canRead() && it.isFile && it.name.contains("$id") && it.name.endsWith(
+                        ".jpg"
+                    )
+                }?.map {
                     it.toUri()
                 }
             if (filteredFiles.isNullOrEmpty()) {
