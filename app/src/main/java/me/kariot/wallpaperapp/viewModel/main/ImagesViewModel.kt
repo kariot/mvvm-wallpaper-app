@@ -43,7 +43,7 @@ class ImagesViewModel(val repo: MainRepository) : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                imagesResponse.postValue(Resource.Error(e.message ?: "An error occurred", null))
+                images.postValue(Resource.Error(e.message ?: "An error occurred", null))
             }
         }
     }

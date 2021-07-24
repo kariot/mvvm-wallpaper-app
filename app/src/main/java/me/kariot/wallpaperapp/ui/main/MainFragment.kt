@@ -8,7 +8,6 @@ import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -17,10 +16,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.launch
+import me.kariot.wallpaperapp.R
 import me.kariot.wallpaperapp.databinding.FragmentMainBinding
 import me.kariot.wallpaperapp.databinding.NetworkViewBinding
 import me.kariot.wallpaperapp.repo.MainRepository
 import me.kariot.wallpaperapp.ui.base.BaseFragment
+import me.kariot.wallpaperapp.utils.Dialogs
 import me.kariot.wallpaperapp.utils.ImageUtils
 import me.kariot.wallpaperapp.utils.Resource
 import me.kariot.wallpaperapp.utils.Utils
@@ -71,7 +72,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
         binding.fabWallpaper.setOnClickListener {
             val currentWallpaper =
                 imagesViewModel.images.value?.data?.get(binding.vpImages.currentItem)
-            Log.d("Current Item", "${binding.vpImages.currentItem}")
             ImageUtils.urlToBitmap(requireContext(), currentWallpaper?.src?.portrait, { bitmap ->
                 val isSuccess =
                     ImageUtils.saveImageToStorage(requireContext(), bitmap, currentWallpaper?.id)
@@ -121,8 +121,26 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
 
     private fun updateDeviceWallpaper(bmp: Bitmap) {
         val wallpaperManager = WallpaperManager.getInstance(requireContext())
-        wallpaperManager.setBitmap(bmp)
-        Toast.makeText(requireContext(), "Wallpaper updated", Toast.LENGTH_SHORT).show()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Dialogs.askConfirmation(requireActivity(), onClickYes = {
+                wallpaperManager.setBitmap(bmp, null, true, WallpaperManager.FLAG_LOCK)
+                wallpaperManager.setBitmap(bmp, null, true, WallpaperManager.FLAG_SYSTEM)
+            }, onClickNo = {
+                wallpaperManager.setBitmap(bmp, null, true, WallpaperManager.FLAG_SYSTEM)
+            })
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.wallpaper_updated),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.wallpaper_updated),
+                Toast.LENGTH_SHORT
+            ).show()
+            wallpaperManager.setBitmap(bmp)
+        }
     }
 
     private fun initError(message: String?) {
@@ -140,11 +158,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
     private fun showErrorSnack(message: String?) {
         val snack = Snackbar.make(
             binding.root,
-            message ?: "An error occurred while fetching data..!",
+            message ?: getString(R.string.api_error_msg),
             Snackbar.LENGTH_INDEFINITE
         )
         with(snack) {
-            setAction("RETRY") {
+            setAction(getString(R.string.retry)) {
                 imagesViewModel.getImages()
             }
             show()
