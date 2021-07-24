@@ -8,6 +8,7 @@ import me.kariot.wallpaperapp.model.responseModel.Photo
 import me.kariot.wallpaperapp.model.responseModel.PhotosResponseModel
 import me.kariot.wallpaperapp.repo.MainRepository
 import me.kariot.wallpaperapp.utils.Resource
+import java.io.IOException
 
 class ImagesViewModel(val repo: MainRepository) : ViewModel() {
     val imagesResponse: MutableLiveData<Resource<PhotosResponseModel>> = MutableLiveData()
@@ -43,7 +44,18 @@ class ImagesViewModel(val repo: MainRepository) : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                images.postValue(Resource.Error(e.message ?: "An error occurred", null))
+                when (e) {
+                    is IOException -> images.postValue(
+                        Resource.Error(
+                            "Connection failure"
+                        )
+                    )
+                    else -> images.postValue(
+                        Resource.Error(
+                            "An error occurred"
+                        )
+                    )
+                }
             }
         }
     }

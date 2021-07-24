@@ -171,6 +171,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
 
     private fun hideProgress() {
         if (imagesViewModel.isFirstRequest()) {
+            networkView.vError.hide()
             networkView.vLoading.hide()
             return
         }
@@ -180,6 +181,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
     private fun showLoading() {
         if (imagesViewModel.isFirstRequest()) {
             networkView.vLoading.show()
+            networkView.vError.hide()
             return
         }
         binding.swipeRefreshLayout.isRefreshing = true
